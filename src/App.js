@@ -1,18 +1,27 @@
 import React, { Component } from 'react';
-import logo from './assets/images/logo.svg';
 import './App.css';
+import { data as searchdata } from './assets/data/giphy-search.json';
+import { data as trenddata } from './assets/data/giphy-trending.json';
+import SearchForm from './components/search-form';
+import GifDatasetManager from './components/gif-dataset-manager';
 
 class App extends Component {
+  state = {
+    isLightboxOn: false
+  }
   render() {
+    console.log('searchdata', searchdata);
+
     return (
       <div className="App">
-        <header className="App-header">
-          <img src={logo} className="App-logo" alt="logo" />
-          <h1 className="App-title">Welcome to React</h1>
-        </header>
-        <p className="App-intro">
-          To get started, edit <code>src/App.js</code> and save to reload.
-        </p>
+
+        <SearchForm />
+
+        <GifDatasetManager
+          trends={trenddata}
+          search={searchdata}
+        />
+
       </div>
     );
   }
