@@ -24,7 +24,7 @@ class App extends Component {
 
       // Get random, unique images from the trending data
       while (imgCount > 0) {
-        let idx = Math.floor(Math.random() * data.length - 1);
+        let idx = Math.floor((Math.random() * data.length - 1) + 1);
         if (countCache[idx] === undefined) {
           randImgs.push(data[idx]);
           countCache[idx] = true;
