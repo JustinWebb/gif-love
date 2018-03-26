@@ -1,23 +1,23 @@
 import React from 'react';
 import GifView from '../gif-view';
+import Viewport from '../viewport';
+import './gif-dataset.css';
 
 const GifDataset = (props) => {
+  let gifs = [];
+  if (props.dataset.length) {
+    // Create list of views
+    gifs = props.dataset.map(gif => <GifView gif={gif} />);
+  }
   return (
-    <section className="gif-set">
+    <section className="gif-dataset">
       <header className="info">
         <h1>{props.heading}</h1>
       </header>
-      <div className="viewport">
-        <ul>
-          {props.dataset.map(gif => {
-            return (
-              <li key={`gif-${gif.id}`}>
-                <GifView gif={gif} />
-              </li>
-            );
-          })}
-        </ul>
-      </div>
+      <Viewport
+        childElems={gifs}
+        xScroll={props.horizontalScroll}
+      />
     </section>
   );
 }

@@ -1,0 +1,16 @@
+.gif-dataset {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto 42px;
+  max-width: 1248px;
+}
+
+.gif-dataset .info {
+  text-align: left;
+  margin-bottom: 1.25em;
+}
+
+.gif-dataset .info h1 {
+  display: inline;
+}
+

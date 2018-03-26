@@ -1,11 +1,12 @@
 import React from 'react';
+import './search-form.css';
 
 const SearchForm = () => (
   <form className="search-form">
     <input
       name="search"
       type="text"
-      value=""
+
       placeholder="Search for GIFs"
     />
     <button name="submit-query" type="submit" />

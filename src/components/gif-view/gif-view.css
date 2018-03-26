@@ -1,0 +1,16 @@
+.gif-view {
+  display: inline-block;
+  min-width: 48px;
+  min-height: 48px;
+}
+.ani-loading img {
+  animation: recycle-spin infinite 3s linear;
+  height: 100%;
+  width: 100%;
+  margin: 0 auto;
+}
+
+@keyframes recycle-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

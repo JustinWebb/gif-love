@@ -1,0 +1,45 @@
+.viewport {
+  width: 100%;
+  margin: 0 auto;
+}
+
+.viewport ul {
+  display: flex;
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+  list-style: none;
+}
+
+/* ----------------------------------
+Modified behavior
+---------------------------------- */
+
+/* scroll-x */
+.viewport.scroll-x {
+  overflow-x: scroll;
+}
+
+.viewport.scroll-x ul {
+  flex-wrap: nowrap;
+  flex-direction: row;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
+
+.viewport.scroll-x li {
+  margin: 0 3px;
+}
+
+/* scroll-y */
+.viewport.scroll-y {
+  overflow-y: scroll;
+}
+
+.viewport.scroll-y ul {
+  flex-wrap: wrap;
+  justify-content: space-around;
+  align-content: space-around;
+}

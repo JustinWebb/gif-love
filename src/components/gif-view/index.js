@@ -1,24 +1,37 @@
 import React from 'react';
-import loading from '../../assets/images/recycle-by-rivercon.svg';
+import loaderImg from '../../assets/images/recycle-by-rivercon.svg';
+import './gif-view.css';
 
 const FIXED_WIDTH = '200w.gif';
 const FIXED_WIDTH_SMALL_STILL = '100w.gif';
+const IMG_SOURCES = [
+  { name: FIXED_WIDTH_SMALL_STILL, mediaQuery: '(max-width: 619px)' },
+  { name: FIXED_WIDTH, mediaQuery: '(min-width: 620px)' },
+];
 
 const GifView = (props) => {
-  let img = <img src={loading} alt="loading..." />;
-  let url = '';
+  let picture = null;
+
   if (props.gif) {
-    url = props.gif.images.fixed_width.url.replace(FIXED_WIDTH, '');
-    img = <img src={url + FIXED_WIDTH} alt={props.gif.title} />;
+    const url = props.gif.images.fixed_width.url.replace(FIXED_WIDTH, '');
+    const img = <img src={url + FIXED_WIDTH} alt={props.gif.title} />;
+    picture = (
+      <picture className="gif-view">
+        {IMG_SOURCES.map((src, idx) => {
+          return <source key={idx} srcSet={url + src.name} media={src.mediaQuery} />
+        })}
+        {img}
+      </picture>
+    );
+  } else {
+    picture = (
+      <picture className="gif-view ani-loading">
+        <img src={loaderImg} alt="loading..." />
+      </picture>
+    );
   }
 
-  return (
-    <picture className="gif-view">
-      <source srcSet={url + FIXED_WIDTH_SMALL_STILL} media="(max-width: 599px)" />
-      <source srcSet={url + FIXED_WIDTH} media="(min-width: 600px)" />
-      {img}
-    </picture>
-  );
+  return picture;
 }
 
 export default GifView;
