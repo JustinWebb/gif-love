@@ -18,14 +18,39 @@ export default class Viewport extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      flexHeight: 0
+      flexHeight: 0,
+      reflowInterval: null,
     }
     this.port = null;
   }
 
+  onMasonryReflow = (evt) => {
+    // Debounce (No need to run if presently running)
+    if (this.state.reflowInterval) {
+      cancelAnimationFrame(this.state.reflowInterval);
+    }
+    // Queue next resize for browser repaint
+    this.setState({
+      reflowInterval: requestAnimationFrame(this.handleMasonryReflow)
+    });
+  }
+
+  handleMasonryReflow = () => {
+    const list = this.port.childNodes[0];
+    const reflowPx = Array
+      .from(list.childNodes)
+      .reduce((acc, child) => { return acc += child.offsetHeight }, 0);
+    const numCols = this.getColumnCount();
+    const flexHeight = Math
+      .ceil((reflowPx / numCols) + (reflowPx / (list.childElementCount + 1)));
+
+    this.setState({ flexHeight });
+  }
+
   getColumnCount = () => {
     const portWidth = this.port.offsetWidth;
-    let numCols = null
+    let numCols = null;
+
     if (portWidth <= 419) {
       numCols = 3;
     }
@@ -44,32 +69,23 @@ export default class Viewport extends React.Component {
     else {
       numCols = 6;
     }
+
     return numCols;
   };
 
-  doMasonryReflow = (evt) => {
-    const list = this.port.querySelector('ul');
-    const reflowPx = Array
-      .from(list.childNodes)
-      .reduce((acc, child) => { return acc += child.offsetHeight }, 0);
-    const numCols = this.getColumnCount();
-    const flexHeight = Math
-      .ceil((reflowPx / numCols) + (reflowPx / (list.childElementCount + 1)));
-
-    this.setState({ flexHeight });
-  }
-
   componentDidMount() {
     if (!this.props.xScroll) {
-      window.addEventListener('load', this.doMasonryReflow.bind(this));
-      window.addEventListener('resize', this.doMasonryReflow.bind(this));
+      window.addEventListener('load', this.onMasonryReflow.bind(this), false);
+      window.addEventListener('resize', this.onMasonryReflow.bind(this), false);
+      window.addEventListener('orientationchange', this.onMasonryReflow.bind(this), false);
     }
   }
 
   componentWillUnmount() {
     if (!this.props.xScroll) {
-      window.removeEventListener('load', this.doMasonryReflow);
-      window.addEventListener('resize', this.doMasonryReflow);
+      window.removeEventListener('load', this.onMasonryReflow);
+      window.addEventListener('resize', this.onMasonryReflow);
+      window.addEventListener('orientationchange', this.onMasonryReflow);
     }
   }
 
