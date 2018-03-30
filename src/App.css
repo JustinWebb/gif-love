@@ -1,6 +1,25 @@
 .App {
+  display: flex;
+  flex-direction: column;
   text-align: center;
-  width: 98%;
-  margin: 0 auto;
   color: #333;
 }
+
+.App > [class^=app-] {
+  width: 100%;
+}
+
+.App > .app-header {
+  z-index: 0;
+  flex: 0 64px;
+  display: flex;
+  justify-content: center;
+  margin-bottom: 4px;
+}
+
+.App > .app-content {
+  flex: 1 1 calc(100vh - 68px);
+  overflow: auto;
+  padding: 20px 0;
+}
+

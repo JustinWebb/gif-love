@@ -44,12 +44,16 @@ class App extends Component {
     return (
       <main className="App">
 
-        <SearchForm />
+        <header className="app-header">
+          <SearchForm />
+        </header>
 
-        <GifDatasetManager
-          trends={this.state.trendingImgs}
-          search={searchdata}
-        />
+        <div className="app-content foo">
+          <GifDatasetManager
+            trends={this.state.trendingImgs}
+            search={searchdata}
+          />
+        </div>
 
       </main>
     );
