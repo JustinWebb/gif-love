@@ -12,7 +12,8 @@ export default class Viewport extends React.Component {
 
   static propTypes = {
     childElems: PropTypes.arrayOf(PropTypes.element).isRequired,
-    xScroll: PropTypes.bool
+    scrollX: PropTypes.bool,
+    onScroll: PropTypes.func,
   }
 
   constructor(props) {
@@ -73,19 +74,32 @@ export default class Viewport extends React.Component {
     return numCols;
   };
 
+  onPortScroll = (evt) => {
+    evt.stopImmediatePropagation();
+    this.props.onScroll(evt);
+  };
+
   componentDidMount() {
-    if (!this.props.xScroll) {
-      window.addEventListener('load', this.onMasonryReflow.bind(this), false);
-      window.addEventListener('resize', this.onMasonryReflow.bind(this), false);
-      window.addEventListener('orientationchange', this.onMasonryReflow.bind(this), false);
+    if (this.port) {
+      this.port.addEventListener('scroll', this.onPortScroll, false);
+    }
+
+    if (!this.props.scrollX) {
+      window.addEventListener('load', this.onMasonryReflow, false);
+      window.addEventListener('resize', this.onMasonryReflow, false);
+      window.addEventListener('orientationchange', this.onMasonryReflow, false);
     }
   }
 
   componentWillUnmount() {
-    if (!this.props.xScroll) {
-      window.removeEventListener('load', this.onMasonryReflow);
-      window.addEventListener('resize', this.onMasonryReflow);
-      window.addEventListener('orientationchange', this.onMasonryReflow);
+    if (this.port) {
+      this.port.removeEventListener('scroll', this.onPortScroll, false);
+    }
+
+    if (!this.props.scrollX) {
+      window.removeEventListener('load', this.onMasonryReflow, false);
+      window.removeEventListener('resize', this.onMasonryReflow, false);
+      window.removeEventListener('orientationchange', this.onMasonryReflow, false);
     }
   }
 
@@ -96,13 +110,13 @@ export default class Viewport extends React.Component {
     if (this.props.childElems.length) {
       listItems = this.props.childElems.map(elem => <li key={uuid()}>{elem}</li>);
       // Set scrolling behaviors
-      klasses.push((this.props.xScroll) ? VIEWPORT_SCROLL_X : VIEWPORT_SCROLL_Y);
+      klasses.push((this.props.scrollX) ? VIEWPORT_SCROLL_X : VIEWPORT_SCROLL_Y);
     }
 
     return (
       <div className={klasses.join(' ')} ref={div => this.port = div}>
         <ul style={
-          this.props.xScroll ? null : { maxHeight: `${this.state.flexHeight}px` }
+          this.props.scrollX ? null : { maxHeight: `${this.state.flexHeight}px` }
         }>
           {listItems}
         </ul>

@@ -16,7 +16,8 @@ const GifDataset = (props) => {
       </header>
       <Viewport
         childElems={gifs}
-        xScroll={props.horizontalScroll}
+        scrollX={props.scrollX}
+        onScroll={props.onViewportScroll}
       />
     </section>
   );

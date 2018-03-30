@@ -35,6 +35,10 @@ class App extends Component {
     return randImgs;
   }
 
+  handleViewportScroll = (evt) => {
+    console.log('handleViewportScroll', evt);
+  }
+
   componentDidMount() {
     const trendingImgs = this.selectFromTrending(trenddata);
     this.setState({ trendingImgs });
@@ -48,10 +52,11 @@ class App extends Component {
           <SearchForm />
         </header>
 
-        <div className="app-content foo">
+        <div className="app-content">
           <GifDatasetManager
             trends={this.state.trendingImgs}
             search={searchdata}
+            onViewportScroll={this.handleViewportScroll}
           />
         </div>
 

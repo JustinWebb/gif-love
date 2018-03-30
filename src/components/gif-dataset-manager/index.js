@@ -8,7 +8,8 @@ const GifDatasetManager = (props) => {
       <GifDataset
         heading="Trending"
         dataset={props.trends}
-        horizontalScroll={true}
+        scrollX={true}
+        onViewportScroll={props.onViewportScroll}
       />
       <GifDataset
         heading="Favorites"
