@@ -1,7 +1,7 @@
 .gif-view {
   display: inline-block;
-  min-width: 48px;
-  min-height: 48px;
+  min-width: 100px;
+  min-height: 50px;
 }
 .ani-loading img {
   animation: recycle-spin infinite 3s linear;

@@ -1,16 +1,23 @@
 import React from 'react';
 import './search-form.css';
 
-const SearchForm = () => (
-  <form className="search-form">
-    <input
-      name="search"
-      type="text"
+export default class SearchForm extends React.Component {
 
-      placeholder="Search for GIFs"
-    />
-    <button name="submit-query" type="submit" />
-  </form>
-);
+  handleSubmit = (e) => {
+    e.preventDefault();
+    console.log('handleSubmit');
+  }
 
-export default SearchForm;
+  render() {
+    return (
+      <form className="search-form" onSubmit={this.handleSubmit}>
+        <input
+          name="search"
+          type="text"
+          placeholder="Search for GIFs"
+        />
+        <button name="submit-query" type="submit" />
+      </form>
+    );
+  }
+}

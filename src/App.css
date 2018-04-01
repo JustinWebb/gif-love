@@ -19,6 +19,7 @@
 
 .App > .app-content {
   flex: 1 1 calc(100vh - 68px);
+  width: auto;
   overflow: auto;
   padding: 20px 0;
 }

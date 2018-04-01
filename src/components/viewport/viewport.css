@@ -9,6 +9,16 @@
   padding: 0;
   width: 100%;
   list-style: none;
+  -webkit-overflow-scrolling: touch;
+  -ms-overflow-style: -ms-autohiding-scrollbar;
+}
+
+.viewport ul::-webkit-scrollbar {
+  display: none;
+}
+
+.viewport.debug-colored {
+  background-color: yellow;
 }
 
 /* ----------------------------------
@@ -17,7 +27,7 @@ Modified behavior
 
 /* scroll-x */
 .viewport.scroll-x {
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 
 .viewport.scroll-x ul {
@@ -25,22 +35,38 @@ Modified behavior
   flex-direction: row;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 6px;
+  margin-bottom: 12px;
   height: 100%;
 }
 
 .viewport.scroll-x li {
+  flex: 0 0 auto;
   margin: 0 3px;
 }
 
 /* scroll-y */
-.viewport.scroll-y {
-  overflow-y: scroll;
+/* .viewport.scroll-y {} */
+
+.viewport.scroll-y.constrained {
+  overflow-y: auto;
 }
 
 .viewport.scroll-y ul {
   flex-flow: column wrap;
   justify-content: space-around;
+  width: 100%;
+  min-height: 50px;
   /* TODO: make height dynamic */
-  max-height: 810px; 
+  max-height: 810px;
+  margin-bottom: 24px;
+}
+
+.viewport.scroll-x li {
+  flex: 0 0 auto;
+}
+
+@media (min-width: 768px) {
+  .viewport.scroll-y ul {
+    min-height: 200px;
+  }
 }

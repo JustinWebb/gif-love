@@ -8,17 +8,12 @@ const PIC_SCHEMA = {
     {
       name: 'fixed_width_small_still',
       filename: '100w.gif',
-      mediaQuery: '(max-width: 619px)'
-    },
-    {
-      name: 'fixed_height_downsampled',
-      filename: '200_d.gif',
-      mediaQuery: '(max-width: 619px)'
+      mediaQuery: '(max-width: 767px)'
     },
     {
       name: 'fixed_width',
       filename: '200w.gif',
-      mediaQuery: '(min-width: 620px)'
+      mediaQuery: '(min-width: 768px)'
     },
   ]
 }

@@ -35,8 +35,10 @@ class App extends Component {
     return randImgs;
   }
 
-  handleViewportScroll = (evt) => {
-    console.log('handleViewportScroll', evt);
+  handleViewportScroll = (evt, data) => {
+    if (data.scrollX) {
+      console.log('wtf', evt.type, data);
+    }
   }
 
   componentDidMount() {
