@@ -24,9 +24,11 @@ export default class Viewport extends React.Component {
     this.state = {
       flexHeight: 0,
       reflowInterval: null,
+      listFlexReady: false,
     }
+
     this.port = null;
-    this.resizeObserver = null
+    this.resizeObserver = null;
   }
 
   onMasonryReflow = (e) => {
@@ -38,17 +40,11 @@ export default class Viewport extends React.Component {
     }
     // Queue next resize for browser repaint
     this.setState({
-      reflowInterval: requestAnimationFrame(this.handleMasonryReflow)
+      reflowInterval: requestAnimationFrame(this.handleMasonryReflow),
     });
   }
 
-  handleObserverResize = (entries) => {
-    const flexHeight = entries[0].contentRect.height;
-    console.log('handleObserverResize', flexHeight);
-    this.handleMasonryReflow(flexHeight);
-  }
-
-  handleMasonryReflow = (explicitHeight) => {
+  handleMasonryReflow = () => {
     const list = this.port.childNodes[0];
     const reflowPx = Array
       .from(list.childNodes)
@@ -56,7 +52,7 @@ export default class Viewport extends React.Component {
     const numCols = this.getColumnCount();
     const flexHeight = Math
       .ceil((reflowPx / numCols) + (reflowPx / (list.childElementCount + 1)));
-    console.log('reflowing\tcol:' + numCols, ', fh: ' + flexHeight + '\n\n');
+    console.log('reflowing\tcol:' + numCols + ', fh: ' + flexHeight, this.port.childNodes[0]);
     this.setState({ flexHeight });
   }
 
@@ -86,6 +82,31 @@ export default class Viewport extends React.Component {
     return numCols;
   };
 
+  attachResizeObserver = () => {
+    this.resizeObserver = (window.ResizeObserver !== undefined)
+      ? new window.ResizeObserver(this.updateMasonry)
+      : new ResizeObserver(this.updateMasonry);
+    this.resizeObserver.observe(this.port.childNodes[0]);
+  }
+
+  onMobileOrientationChange = (e) => {
+    console.log(e.type, this.port.childNodes[0]);
+    this.setState({ listFlexReady: true });
+  }
+
+  updateMasonry = (entries, observer) => {
+    const entry = entries[0];
+    if (this.state.listFlexReady) {
+      this.setState({ listFlexReady: false });
+      setTimeout(this.handleMasonryReflow, 429);
+    } else {
+      const domHeight = Number(entry.target.style.maxHeight.replace('px', ''));
+      if (domHeight !== this.state.flexHeight) {
+        this.setState({ listFlexReady: true })
+      }
+    }
+  }
+
   onPortScroll = (e) => {
     const scrollX = this.props.scrollX;
     const xMax = e.target.scrollWidth - e.target.offsetWidth;
@@ -106,17 +127,22 @@ export default class Viewport extends React.Component {
 
     if (!this.props.scrollX) {
       window.addEventListener('load', this.onMasonryReflow, false);
-      window.addEventListener('resize', this.onMasonryReflow, false);
-      window.addEventListener('orientationchange', this.onMasonryReflow, false);
-    }
 
-    if (!this.props.scrollX && this.port) {
+      // Setup dynamic masonry effect event handling. Since physical
+      // mobile devices throw events that viewport simulators don't,
+      // changes are managed via ResizeObserver for simplicity
       const md = new MobileDetect(window.navigator.userAgent);
-      if (md.mobile()) {
-        this.resizeObserver = (window.ResizeObserver !== undefined)
-          ? new window.ResizeObserver(this.handleObserverResize.bind(this))
-          : new ResizeObserver(this.handleObserverResize.bind(this))
-        this.resizeObserver.observe(this.port);
+      if (md.mobile() === null) {
+        window.addEventListener('resize', this.onMasonryReflow, false);
+        window.addEventListener('orientationchange', this.onMasonryReflow, false);
+        // Desktop screens are always ready for flexing
+        this.setState({ listFlexReady: true });
+      } else {
+        window.addEventListener('load', this.attachResizeObserver, false);
+        window.addEventListener('orientationchange', this.onMobileOrientationChange, false);
+        // ResizeObserver must be switched on and off. Start with off
+        // since window's onload event is already active
+        this.setState({ listFlexReady: false });
       }
     }
   }
@@ -125,12 +151,10 @@ export default class Viewport extends React.Component {
     if (this.port) {
       this.port.removeEventListener('scroll', this.onPortScroll, true);
     }
-
-    if (!this.props.scrollX) {
-      window.removeEventListener('load', this.onMasonryReflow, false);
-      window.removeEventListener('resize', this.onMasonryReflow, false);
-      window.removeEventListener('orientationchange', this.onMasonryReflow, false);
-    }
+    window.removeEventListener('load', this.onMasonryReflow, false);
+    window.removeEventListener('resize', this.onMasonryReflow, false);
+    window.removeEventListener('orientationchange', this.onMasonryReflow, false);
+    window.removeEventListener('load', this.attachResizeObserver, false);
   }
 
   render() {
@@ -148,15 +172,13 @@ export default class Viewport extends React.Component {
     }
 
     return (
-      <div className="foo">
-        <span>{`${this.state.flexHeight}px`}</span>
-        <div className={klasses.join(' ')} ref={div => this.port = div}>
-          <ul style={
-            this.props.scrollX ? null : { maxHeight: `${this.state.flexHeight}px` }
-          }>
-            {listItems}
-          </ul>
-        </div>
+      <div className={klasses.join(' ')} ref={div => this.port = div}>
+        <ul style={
+          this.props.scrollX ? null : { maxHeight: `${this.state.flexHeight}px` }
+        }>
+          {listItems}
+        </ul>
+        <span className="debug-box">{`${this.state.flexHeight}px`}</span>
       </div>
     );
   };

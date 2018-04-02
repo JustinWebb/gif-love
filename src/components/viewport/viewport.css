@@ -1,6 +1,7 @@
 .viewport {
   width: 100%;
   margin: 0 auto;
+  position: relative;
 }
 
 .viewport ul {
@@ -19,6 +20,11 @@
 
 .viewport.debug-colored {
   background-color: yellow;
+}
+.viewport .debug-box {
+  position: absolute;
+  top: 0;
+  z-index: 100;
 }
 
 /* ----------------------------------
@@ -58,7 +64,6 @@ Modified behavior
   min-height: 50px;
   /* TODO: make height dynamic */
   max-height: 810px;
-  margin-bottom: 24px;
 }
 
 .viewport.scroll-x li {
