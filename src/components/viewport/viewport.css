@@ -59,11 +59,12 @@ Modified behavior
 
 .viewport.scroll-y ul {
   flex-flow: column wrap;
-  justify-content: space-around;
+  justify-content: flex-start;
   width: 100%;
   min-height: 50px;
   /* TODO: make height dynamic */
   max-height: 810px;
+  padding-bottom: 12px;
 }
 
 .viewport.scroll-x li {
