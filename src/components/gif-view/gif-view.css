@@ -1,13 +1,52 @@
 .gif-view {
   display: inline-block;
-  min-width: 100px;
+  max-width: 100px;
   min-height: 50px;
+  font-size: 0.9em;
 }
-.ani-loading img {
-  animation: recycle-spin infinite 3s linear;
+
+.gif-view img {
+  max-width: 100%;
+  opacity: 0.01;
+}
+
+.gif-view.ready img {
+  opacity: 1;
+  transition: opacity ease-in 0.5s;
+}
+
+.gif-view.loading {
+  position: relative;
+}
+
+.gif-view.loading:before {
+  content: '';
+  position: absolute;
   height: 100%;
   width: 100%;
+  z-index: -1;
+  background: no-repeat center center #fff url('../../assets/images/recycle.svg');
+  animation: recycle-spin infinite 1s linear;
+}
+
+.gif-view.error {
+  width: 100px;
+  height: 100%;
+}
+
+.gif-view.error img {
   margin: 0 auto;
+  opacity: 1;
+}
+
+@media (min-width: 768px) {
+  .gif-view {
+    max-width: 200px;
+  }
+
+  .gif-view.error {
+    width: 200px;
+  }
 }
 
 @keyframes recycle-spin {

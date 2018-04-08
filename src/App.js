@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import './App.css';
 import { data as searchdata } from './assets/data/giphy-search.json';
-import { data as trenddata } from './assets/data/giphy-trending.json';
+import { data as favoritesdata } from './assets/data/giphy-trending.json';
 import SearchForm from './components/search-form';
 import GifDatasetManager from './components/gif-dataset-manager';
 
@@ -10,11 +10,11 @@ const TRENDING_IMAGE_COUNT_DEFUALT = 9;
 class App extends Component {
   state = {
     isLightboxOn: false,
-    trendingImgs: [],
-    searchImgs: []
+    searchImgs: [],
+    favoriteImgs: [],
   }
 
-  selectFromTrending = (data) => {
+  selectFromFavorites = (data) => {
     const randImgs = [];
     if (Array.isArray(data) && data.length) {
       let imgCount = (data.length >= TRENDING_IMAGE_COUNT_DEFUALT)
@@ -42,8 +42,9 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const trendingImgs = this.selectFromTrending(trenddata);
-    this.setState({ trendingImgs });
+    const searchImgs = searchdata;
+    const favoriteImgs = this.selectFromFavorites(favoritesdata);
+    this.setState({ searchImgs, favoriteImgs });
   }
 
   render() {
@@ -56,8 +57,8 @@ class App extends Component {
 
         <div className="app-content">
           <GifDatasetManager
-            trends={this.state.trendingImgs}
-            search={searchdata}
+            search={this.state.searchImgs}
+            favorites={this.state.favoriteImgs}
             onViewportScroll={this.handleViewportScroll}
           />
         </div>

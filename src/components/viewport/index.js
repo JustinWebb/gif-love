@@ -9,6 +9,7 @@ import './viewport.css';
 const VIEWPORT = 'viewport';
 const VIEWPORT_SCROLL_Y = 'scroll-y';
 const VIEWPORT_SCROLL_X = 'scroll-x';
+const RESIZE_OBSERVER_DEBOUNCE_RATE = 264;
 
 export default class Viewport extends React.Component {
 
@@ -27,7 +28,7 @@ export default class Viewport extends React.Component {
 
     this.port = null;
     this.resizeObserver = null;
-    this.listFlexReady = false;
+    this.listFlexReady = true;
   }
 
   onMasonryReflow = (e) => {
@@ -96,7 +97,7 @@ export default class Viewport extends React.Component {
     if (this.listFlexReady) {
       this.handleMasonryReflow();
     }
-  }, 264, { trailing: true });
+  }, RESIZE_OBSERVER_DEBOUNCE_RATE, { trailing: true });
 
   onPortScroll = (e) => {
     const scrollX = this.props.scrollX;
@@ -119,21 +120,21 @@ export default class Viewport extends React.Component {
     if (!this.props.scrollX) {
       window.addEventListener('load', this.onMasonryReflow, false);
 
-      // Setup dynamic masonry effect event handling. Since physical
-      // mobile devices throw events that viewport simulators don't,
-      // changes are managed via ResizeObserver for simplicity
+      // Setup dynamic masonry effect event handling
       const md = new MobileDetect(window.navigator.userAgent);
-      if (md.mobile() === null) {
-        window.addEventListener('resize', this.onMasonryReflow, false);
-        window.addEventListener('orientationchange', this.onMasonryReflow, false);
-        // Desktop screens are always ready for flexing
-        this.listFlexReady = true;
-      } else {
+      if (md.mobile() !== null) {
+        // Mobile devices resize elements as the URL bar toggles
+        // visibility on scroll events. This behavior forces 
+        // property changes that interfere with the masonry
+        // algorithm. It is best to update masonry passively
+        // with ResizeObserver after mobile does its thing.
         window.addEventListener('load', this.attachResizeObserver, false);
         window.addEventListener('orientationchange', this.onMobileOrientationChange, false);
-        // ResizeObserver must be switched on and off. Start with off
-        // since window's onload event is already active
+        // ResizeObserver determines when ready from here on.
         this.listFlexReady = false;
+      } else {
+        window.addEventListener('resize', this.onMasonryReflow, false);
+        window.addEventListener('orientationchange', this.onMasonryReflow, false);
       }
     }
   }
@@ -146,6 +147,13 @@ export default class Viewport extends React.Component {
     window.removeEventListener('resize', this.onMasonryReflow, false);
     window.removeEventListener('orientationchange', this.onMasonryReflow, false);
     window.removeEventListener('load', this.attachResizeObserver, false);
+    window.removeEventListener('orientationchange', this.onMobileOrientationChange, false);
+
+    this.updateMasonry.cancel();
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (this.state.flexHeight && this.state.flexHeight === nextState.flexHeight) ? false : true;
   }
 
   render() {

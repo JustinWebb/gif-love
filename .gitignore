@@ -70,6 +70,7 @@ typings/
 
 # workspace
 .vscode
+notes
 
 # misc
 .DS_Store

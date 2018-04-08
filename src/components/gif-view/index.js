@@ -1,47 +1,68 @@
 import React from 'react';
-import loaderImg from '../../assets/images/recycle-by-rivercon.svg';
+import PropTypes from 'prop-types';
+import { parseGiphyVO, giphyTypes } from '../../api/giphy-parser';
+import errorImg from '../../assets/images/error.svg';
+import { once } from 'lodash';
 import './gif-view.css';
 
-const PIC_SCHEMA = {
-  defaultTypeName: 'fixed_width',
-  types: [
-    {
-      name: 'fixed_width_small_still',
-      filename: '100w.gif',
-      mediaQuery: '(max-width: 767px)'
-    },
-    {
-      name: 'fixed_width',
-      filename: '200w.gif',
-      mediaQuery: '(min-width: 768px)'
-    },
-  ]
-}
+export default class GifView extends React.Component {
 
-const GifView = (props) => {
-  let picture = null;
+  static propTypes = {
+    gif: PropTypes.object.isRequired,
+    reqKey: PropTypes.string,
+    loader: PropTypes.func,
+  };
 
-  if (props.gif) {
-    const schema = props.gif.images[PIC_SCHEMA.defaultTypeName];
-    const url = schema.url.substring(0, schema.url.lastIndexOf('/') + 1);
-    const defaultImg = <img src={schema.url} alt={props.gif.title} />;
-    picture = (
-      <picture className="gif-view">
-        {PIC_SCHEMA.types.map((src, idx) => {
-          return <source key={idx} srcSet={url + src.filename} media={src.mediaQuery} />
-        })}
-        {defaultImg}
-      </picture>
-    );
-  } else {
-    picture = (
-      <picture className="gif-view ani-loading">
-        <img src={loaderImg} alt="loading..." />
-      </picture>
-    );
+  state = {
+    mode: 'loading',
+    hasError: false,
+  };
+
+  onImgLoad = once((e) => {
+    console.log('onImgLoad');
+    this.setState({ mode: 'ready' });
+
+    if (this.props.loader) {
+      this.props.loader(e, this.props.reqKey);
+    }
+  });
+
+  onImgError = (e) => {
+    this.setState({ mode: 'error', hasError: true });
   }
 
-  return picture;
-}
+  componentDidCatch(error, info) {
+    console.log('componentDidCatch', arguments);
+    this.setState({ mode: 'error', hasError: true });
+  }
 
-export default GifView;
+  render() {
+    const schema = parseGiphyVO(this.props.gif);
+    if (!this.state.hasError) {
+      const klasses = ['gif-view'];
+      const img = <img src={schema.imgType.url} alt={schema.title}
+        onLoad={this.onImgLoad}
+        onError={this.onImgError}
+      />;
+
+      klasses.push(this.state.mode);
+
+      return (
+        <picture className={klasses.join(' ')}>
+          {giphyTypes.map((src, idx) => {
+            return <source key={idx} srcSet={schema.baseUrl + src.filename} media={src.mediaQuery} />
+          })}
+          {img}
+        </picture>
+      );
+    } else {
+
+      return (
+        <picture className="gif-view error">
+          <img src={errorImg} alt="This content is not available"
+            height={`${schema.imgType.height}px`} />
+        </picture>
+      );
+    }
+  }
+}
