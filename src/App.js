@@ -4,14 +4,22 @@ import { data as searchdata } from './assets/data/giphy-search.json';
 import { data as favoritesdata } from './assets/data/giphy-trending.json';
 import SearchForm from './components/search-form';
 import GifDatasetManager from './components/gif-dataset-manager';
+import MobileDetect from 'mobile-detect';
 
 const TRENDING_IMAGE_COUNT_DEFUALT = 9;
 
 class App extends Component {
-  state = {
-    isLightboxOn: false,
-    searchImgs: [],
-    favoriteImgs: [],
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      searchImgs: [],
+      favoriteImgs: [],
+      isForcedHeader: false,
+      isLightboxOn: false,
+    };
+
+    this.mobileDevice = null;
   }
 
   selectFromFavorites = (data) => {
@@ -35,10 +43,39 @@ class App extends Component {
     return randImgs;
   }
 
-  handleViewportScroll = (evt, data) => {
-    if (data.scrollX) {
-      console.log('wtf', evt.type, data);
+  onContentScroll = (e) => {
+    this.handleViewportScroll(e, { scrollX: false });
+  }
+
+  toggleForcedHeader = (scrollTop, maxDist) => {
+    if (scrollTop === 0 && this.state.isForcedHeader) {
+      this.setState({ isForcedHeader: !this.state.isForcedHeader });
+    } else if (scrollTop === maxDist && !this.state.isForcedHeader) {
+      this.setState({ isForcedHeader: !this.state.isForcedHeader });
     }
+  }
+
+  handleViewportScroll = (e, data) => {
+    if (data.scrollX) {
+    } else {
+      const content = e.target.getBoundingClientRect();
+      const reel = e.target.firstChild.getBoundingClientRect();
+      const xPad = ['top', 'bottom'].reduce((acc, prop) => {
+        return acc += Number(window
+          .getComputedStyle(e.target, null)
+          .getPropertyValue('padding-' + prop)
+          .replace(/[a-z]/gi, ''));
+      }, 0);
+      const maxDist = (reel.height + xPad) - content.height;
+
+      if (this.mobileDevice) {
+        this.toggleForcedHeader(e.target.scrollTop, maxDist);
+      }
+    }
+  }
+
+  componentWillMount() {
+    this.mobileDevice = new MobileDetect(window.navigator.userAgent).mobile();
   }
 
   componentDidMount() {
@@ -48,14 +85,20 @@ class App extends Component {
   }
 
   render() {
+    const klasses = ['App'];
+
+    if (this.state.isForcedHeader) {
+      klasses.push('fixed-header');
+    }
+
     return (
-      <main className="App">
+      <main className={klasses.join(' ')}>
 
         <header className="app-header">
           <SearchForm />
         </header>
 
-        <div className="app-content">
+        <div className="app-content" onScroll={this.onContentScroll}>
           <GifDatasetManager
             search={this.state.searchImgs}
             favorites={this.state.favoriteImgs}

@@ -11,10 +11,10 @@
 
 .App > .app-header {
   z-index: 0;
-  flex: 0 64px;
+  flex: 0 72px;
   display: flex;
   justify-content: center;
-  margin-bottom: 4px;
+  background-color: #e91e63;
 }
 
 .App > .app-content {
@@ -24,3 +24,14 @@
   padding: 20px 0;
 }
 
+.App.fixed-header {
+  padding: 20px 0;
+}
+
+.App.fixed-header > .app-header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  z-index: 1000;
+  background-color: #ff7f50;
+}

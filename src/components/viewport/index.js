@@ -27,8 +27,9 @@ export default class Viewport extends React.Component {
     }
 
     this.port = null;
+    this.mobileDetect = null;
     this.resizeObserver = null;
-    this.listFlexReady = true;
+    this.isFlexReady = true;
   }
 
   onMasonryReflow = (e) => {
@@ -90,11 +91,11 @@ export default class Viewport extends React.Component {
   }
 
   onMobileOrientationChange = (e) => {
-    this.listFlexReady = true;
+    this.isFlexReady = true;
   }
 
   updateMasonry = debounce((entries, observer) => {
-    if (this.listFlexReady) {
+    if (this.isFlexReady) {
       this.handleMasonryReflow();
     }
   }, RESIZE_OBSERVER_DEBOUNCE_RATE, { trailing: true });
@@ -112,6 +113,10 @@ export default class Viewport extends React.Component {
     }
   };
 
+  componentWillMount() {
+    this.mobileDetect = new MobileDetect(window.navigator.userAgent);
+  }
+
   componentDidMount() {
     if (this.port) {
       this.port.addEventListener('scroll', this.onPortScroll, true);
@@ -121,8 +126,7 @@ export default class Viewport extends React.Component {
       window.addEventListener('load', this.onMasonryReflow, false);
 
       // Setup dynamic masonry effect event handling
-      const md = new MobileDetect(window.navigator.userAgent);
-      if (md.mobile() !== null) {
+      if (this.mobileDetect.mobile() !== null) {
         // Mobile devices resize elements as the URL bar toggles
         // visibility on scroll events. This behavior forces 
         // property changes that interfere with the masonry
@@ -131,7 +135,7 @@ export default class Viewport extends React.Component {
         window.addEventListener('load', this.attachResizeObserver, false);
         window.addEventListener('orientationchange', this.onMobileOrientationChange, false);
         // ResizeObserver determines when ready from here on.
-        this.listFlexReady = false;
+        this.isFlexReady = false;
       } else {
         window.addEventListener('resize', this.onMasonryReflow, false);
         window.addEventListener('orientationchange', this.onMasonryReflow, false);
@@ -153,7 +157,12 @@ export default class Viewport extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    return (this.state.flexHeight && this.state.flexHeight === nextState.flexHeight) ? false : true;
+    const fh = this.state.flexHeight;
+    if (!this.props.scrollX) {
+      return (fh !== 0 && fh === nextState.flexHeight) ? false : true;
+    } else {
+      return (this.props.childElems.length !== nextProps.childElems.length);
+    }
   }
 
   render() {
