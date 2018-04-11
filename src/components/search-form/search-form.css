@@ -22,9 +22,8 @@
 
 .search-form button[type=submit] {
   border: 1px solid #ccc;
-  width: 44px;
-  background-image: none;
-  background-color: #ccc;
+  width: 48px;
+  background: center / 80% no-repeat #ccc url('../../assets/images/search.svg');
   cursor: pointer;
 }
 
