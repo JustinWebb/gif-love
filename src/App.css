@@ -11,10 +11,10 @@
 
 .App > .app-header {
   z-index: 0;
-  flex: 0 72px;
+  flex: 0 78px;
   display: flex;
   justify-content: center;
-  background-color: #e91e63;
+  background-color: #f3c6d5;
 }
 
 .App > .app-content {

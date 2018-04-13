@@ -87,9 +87,7 @@ class App extends Component {
   render() {
     const klasses = ['App'];
 
-    if (this.state.isForcedHeader) {
-      klasses.push('fixed-header');
-    }
+    if (this.state.isForcedHeader) klasses.push('fixed-header');
 
     return (
       <main className={klasses.join(' ')}>
