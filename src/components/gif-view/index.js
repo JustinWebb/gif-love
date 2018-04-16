@@ -14,13 +14,14 @@ export default class GifView extends React.Component {
   };
 
   state = {
-    mode: 'loading',
+    mode: 'idle',
     hasError: false,
+    isLoaded: false,
   };
 
   onImgLoad = once((e) => {
     console.log('onImgLoad');
-    this.setState({ mode: 'ready' });
+    this.setState({ mode: 'ready', isLoaded: true });
 
     if (this.props.loader) {
       this.props.loader(e, this.props.reqKey);
@@ -29,6 +30,14 @@ export default class GifView extends React.Component {
 
   onImgError = (e) => {
     this.setState({ mode: 'error', hasError: true });
+  }
+
+  componentWillReceiveProps(props, nextState) {
+    console.log('wtf', props);
+  }
+
+  shouldComponentUpdate(nextProps, nextState) {
+    return (this.state.isLoaded && this.state.mode === 'ready' && !nextState.hasError) ? false : true;
   }
 
   componentDidCatch(error, info) {

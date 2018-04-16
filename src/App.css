@@ -18,10 +18,10 @@
 }
 
 .App > .app-content {
-  flex: 1 1 calc(100vh - 68px);
+  flex: 1 1 calc(100vh - 78px);
   width: auto;
   overflow: auto;
-  padding: 20px 0;
+  padding: 10px 0;
 }
 
 .App.fixed-header {
@@ -35,3 +35,13 @@
   z-index: 1000;
   background-color: #ff7f50;
 }
+
+.App.fixed-header > .app-content {
+  margin-top: 58px;
+}
+
+@media (min-width: 620px) {
+  .App > .app-content {
+    padding: 20px 0;
+  }
+ }

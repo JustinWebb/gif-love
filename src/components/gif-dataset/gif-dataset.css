@@ -1,7 +1,7 @@
 .gif-dataset {
   display: flex;
   flex-direction: column;
-  margin: 0 auto 42px;
+  margin: 0 auto 16px;
   max-width: 1260px;
 }
 
@@ -14,3 +14,8 @@
   display: inline;
 }
 
+@media (min-width: 620px) {
+  .gif-dataset {
+   margin-bottom: 42px;
+ }
+}

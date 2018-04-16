@@ -24,9 +24,10 @@
 
 .search-form .composite-input button[name=submit] {
   border: 1px solid #bbb;
+  border-left: 0;
   padding: 0;
   width: 48px;
-  background: center / 80% no-repeat #e4e3e3 url('../../assets/images/search.svg');
+  background: center / 75% no-repeat #e4e3e3 url('../../assets/images/search.svg');
   cursor: pointer;
 }
 
@@ -50,6 +51,7 @@
   height: 16px;
   font-size: 0.8em;
   font-weight: 600;
+  border-color: #902222;
   color: #902222;
 }
 

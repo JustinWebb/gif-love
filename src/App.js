@@ -93,7 +93,7 @@ class App extends Component {
       <main className={klasses.join(' ')}>
 
         <header className="app-header">
-          <SearchForm />
+          <SearchForm placeholder={'Search for GIFs'} />
         </header>
 
         <div className="app-content" onScroll={this.onContentScroll}>

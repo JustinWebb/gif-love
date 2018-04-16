@@ -7,59 +7,71 @@ export default class SearchForm extends React.Component {
     fields: {
       query: ''
     },
-    fieldErrors: {}
+    fieldErrors: {},
+    isQuerying: false
   }
 
   onInputChange = (e) => {
-    this.setState({ fields: { query: e.target.value } });
-    console.log('onInputChange', this.state.fields.query);
+    const fields = { query: e.target.value };
+    const fieldErrors = this.validate(fields.query);
+    const isQuerying = (fields.query !== '');
+    this.setState({ fields, fieldErrors, isQuerying });
   }
 
-  validate = () => {
-    const errors = {};
-    const query = this.state.fields.query;
-
-    if (query === '') errors.query = 'Cannot be blank';
-
-    return errors;
-  }
-
-  handleSubmit = (e) => {
-    const fieldErrors = this.validate();
-    this.setState({ fieldErrors });
+  onSubmit = (e) => {
     e.preventDefault();
-
-    if (Object.keys(fieldErrors).length) return;
-
-    console.log('handleSubmit');
-    if (this.props.onSubmit) {
-      this.props.onSubmit(this.state.fields);
+    const fieldErrors = this.state.fieldErrors;
+    const fields = this.state.fields;
+    const errors = Object.assign({}, this.validate(), fieldErrors);
+    // Prevent form submission and display errors if necessary
+    if (Object.keys(errors).length) {
+      this.setState({ fieldErrors: errors });
+      return;
     }
+    // Allow form submission via callback and reset form
+    if (this.props.onSubmit) {
+      this.props.onSubmit(fields);
+    }
+    this.setState({ fields: { query: '' }, fieldErrors, isQuerying: false });
   }
 
-  handleClick = (e) => {
-    if (this.state.fields.query) this.setState((prevState) => {
-      return { fields: { query: '' }, fieldErrors: {} };
-    });
+  onClick = (e) => {
+    const fields = { query: '' };
+    const fieldErrors = { query: 'Cannot be blank' }
+    this.setState({ fields, fieldErrors, isQuerying: false });
+  }
+
+  validate = (queryVal) => {
+    const errors = {};
+    if (queryVal) {
+      // test for 
+      if (/^[@_A-z0-9\s]*$/g.test(queryVal) === false) errors.query = 'No special characters';
+    } else {
+      if (this.state.fields.query === '') errors.query = 'Cannot be blank';
+    }
+    return errors;
   }
 
   render() {
     const klasses = ['search-form'];
+    const clearButton = (this.state.isQuerying)
+      ? <button name="clear" type="text" onClick={this.onClick} tabIndex='-1' />
+      : null;
 
     if (this.state.fieldErrors.length) klasses.push('form-error');
 
     return (
-      <form className={klasses.join(' ')} onSubmit={this.handleSubmit}>
+      <form className={klasses.join(' ')} onSubmit={this.onSubmit}>
         <div className="composite-input">
           <input
             name="search"
             type="text"
-            placeholder="Search for GIFs"
+            placeholder={this.props.placeholder}
             value={this.state.fields.query}
             onChange={this.onInputChange}
           />
-          <button name="clear" type="text" onClick={this.handleClick} />
           <button name="submit" type="submit" />
+          {clearButton}
         </div>
         <span className="field-errors">{this.state.fieldErrors.query}</span>
       </form>
