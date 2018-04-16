@@ -3,6 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "dotenv": "^5.0.1",
     "mobile-detect": "^1.4.1",
     "react": "^16.3.1",
     "react-dom": "^16.2.0",

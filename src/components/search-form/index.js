@@ -1,7 +1,13 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 import './search-form.css';
 
 export default class SearchForm extends React.Component {
+
+  static propTypes = {
+    onSubmit: PropTypes.func.isRequired,
+    placeholder: PropTypes.string,
+  }
 
   state = {
     fields: {

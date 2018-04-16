@@ -52,7 +52,7 @@ export default class GifDatasetManager extends React.Component {
         />
         <GifDataset
           gifs={this.state.searchViews}
-          heading="Search Results"
+          heading={this.props.sectionTitle}
         />
       </div>
     );

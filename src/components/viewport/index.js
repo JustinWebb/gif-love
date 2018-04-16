@@ -157,11 +157,11 @@ export default class Viewport extends React.Component {
   }
 
   shouldComponentUpdate(nextProps, nextState) {
-    const fh = this.state.flexHeight;
-    if (!this.props.scrollX) {
+    if (this.props.childElems !== nextProps.childElems) {
+      return true;
+    } else if (!this.props.scrollX) {
+      const fh = this.state.flexHeight;
       return (fh !== 0 && fh === nextState.flexHeight) ? false : true;
-    } else {
-      return (this.props.childElems.length !== nextProps.childElems.length);
     }
   }
 

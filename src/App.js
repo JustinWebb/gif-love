@@ -1,12 +1,14 @@
 import React, { Component } from 'react';
 import './App.css';
-import { data as searchdata } from './assets/data/giphy-search.json';
 import { data as favoritesdata } from './assets/data/giphy-trending.json';
 import SearchForm from './components/search-form';
 import GifDatasetManager from './components/gif-dataset-manager';
 import MobileDetect from 'mobile-detect';
+import GiphyService from './api/giphy-service';
 
 const TRENDING_IMAGE_COUNT_DEFUALT = 9;
+const SECTION_TITLE_SEARCH = 'Search Results';
+const SECTION_TITLE_TRENDING = 'What\'s Trending';
 
 class App extends Component {
   constructor(props) {
@@ -17,9 +19,14 @@ class App extends Component {
       favoriteImgs: [],
       isForcedHeader: false,
       isLightboxOn: false,
+      sectionTitle: SECTION_TITLE_TRENDING,
     };
 
     this.mobileDevice = null;
+  }
+
+  onContentScroll = (e) => {
+    this.handleViewportScroll(e, { scrollX: false });
   }
 
   selectFromFavorites = (data) => {
@@ -43,8 +50,12 @@ class App extends Component {
     return randImgs;
   }
 
-  onContentScroll = (e) => {
-    this.handleViewportScroll(e, { scrollX: false });
+  sendQuery = (data) => {
+    GiphyService.sendQuery(data.query)
+      .then(json => {
+        console.log('data', json)
+        this.setState({ searchImgs: json.data, sectionTitle: SECTION_TITLE_SEARCH });
+      });
   }
 
   toggleForcedHeader = (scrollTop, maxDist) => {
@@ -79,9 +90,13 @@ class App extends Component {
   }
 
   componentDidMount() {
-    const searchImgs = searchdata;
     const favoriteImgs = this.selectFromFavorites(favoritesdata);
-    this.setState({ searchImgs, favoriteImgs });
+    this.setState({ favoriteImgs });
+
+    GiphyService.sendQuery()
+      .then(json => {
+        this.setState({ searchImgs: json.data });
+      });
   }
 
   render() {
@@ -93,11 +108,15 @@ class App extends Component {
       <main className={klasses.join(' ')}>
 
         <header className="app-header">
-          <SearchForm placeholder={'Search for GIFs'} />
+          <SearchForm
+            onSubmit={this.sendQuery}
+            placeholder={'Search for GIFs'}
+          />
         </header>
 
-        <div className="app-content" onScroll={this.onContentScroll}>
+        <div className="app-content" onScroll={this.onContentScrol}>
           <GifDatasetManager
+            sectionTitle={this.state.sectionTitle}
             search={this.state.searchImgs}
             favorites={this.state.favoriteImgs}
             onViewportScroll={this.handleViewportScroll}
