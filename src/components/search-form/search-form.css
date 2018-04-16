@@ -31,6 +31,10 @@
   cursor: pointer;
 }
 
+.search-form .composite-input button[name=submit]:hover {
+  background: center / 75% no-repeat #e4e3e3 url('../../assets/images/search-alt.svg');
+}
+
 .search-form .composite-input button[name=clear] {
   position: absolute;
   top: 50%;
