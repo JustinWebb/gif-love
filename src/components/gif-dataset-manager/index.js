@@ -20,6 +20,10 @@ export default class GifDatasetManager extends React.Component {
     this.cache = {};
   }
 
+  onGifLoaded = (e, key) => {
+    this.cache[key] = true;
+  }
+
   getViews = (nextProps, reqType) => {
     const giphy = nextProps[reqType];
     return giphy.map(gif => {
@@ -27,12 +31,8 @@ export default class GifDatasetManager extends React.Component {
       const loader = (this.cache[key] === undefined)
         ? this.onGifLoaded
         : null;
-      return <GifView gif={gif} reqKey={key} loader={loader} />;
+      return <GifView gif={gif} reqKey={key} loader={loader} itemHandler={this.props.itemHandler} />;
     });
-  }
-
-  onGifLoaded = (e, key) => {
-    this.cache[key] = true;
   }
 
   componentWillReceiveProps(nextProps) {

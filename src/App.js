@@ -85,6 +85,10 @@ class App extends Component {
     }
   }
 
+  showItemDetail = (gif) => {
+    console.log('showItemDetail', gif);
+  }
+
   componentWillMount() {
     this.mobileDevice = new MobileDetect(window.navigator.userAgent).mobile();
   }
@@ -120,6 +124,7 @@ class App extends Component {
             search={this.state.searchImgs}
             favorites={this.state.favoriteImgs}
             onViewportScroll={this.handleViewportScroll}
+            itemHandler={this.showItemDetail}
           />
         </div>
 

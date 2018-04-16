@@ -11,6 +11,7 @@ export default class GifView extends React.Component {
     gif: PropTypes.object.isRequired,
     reqKey: PropTypes.string,
     loader: PropTypes.func,
+    itemHandler: PropTypes.func,
   };
 
   state = {
@@ -30,6 +31,12 @@ export default class GifView extends React.Component {
 
   onImgError = (e) => {
     this.setState({ mode: 'error', hasError: true });
+  }
+
+  onClick = (e) => {
+    if (this.props.itemHandler) {
+      this.props.itemHandler(this.props.gif);
+    }
   }
 
   componentWillReceiveProps(props, nextState) {
@@ -57,7 +64,7 @@ export default class GifView extends React.Component {
       klasses.push(this.state.mode);
 
       return (
-        <picture className={klasses.join(' ')}>
+        <picture className={klasses.join(' ')} onClick={this.onClick}>
           {giphyTypes.map((src, idx) => {
             return <source key={idx} srcSet={schema.baseUrl + src.filename} media={src.mediaQuery} />
           })}
