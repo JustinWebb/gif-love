@@ -5,6 +5,8 @@ import SearchForm from './components/search-form';
 import GifDatasetManager from './components/gif-dataset-manager';
 import MobileDetect from 'mobile-detect';
 import GiphyService from './api/giphy-service';
+import Lightbox from './components/lightbox';
+import GifView from './components/gif-view';
 
 const TRENDING_IMAGE_COUNT_DEFUALT = 9;
 const SECTION_TITLE_SEARCH = 'Search Results';
@@ -19,6 +21,7 @@ class App extends Component {
       favoriteImgs: [],
       isForcedHeader: false,
       isLightboxOn: false,
+      selectedGif: null,
       sectionTitle: SECTION_TITLE_TRENDING,
     };
 
@@ -27,6 +30,12 @@ class App extends Component {
 
   onContentScroll = (e) => {
     this.handleViewportScroll(e, { scrollX: false });
+  }
+
+  onLightboxClick = (e) => {
+    this.setState(nextState => {
+      return { isLightboxOn: !nextState.isLightboxOn }
+    })
   }
 
   selectFromFavorites = (data) => {
@@ -85,8 +94,12 @@ class App extends Component {
     }
   }
 
-  showItemDetail = (gif) => {
-    console.log('showItemDetail', gif);
+  toggleLightbox = (gif) => {
+    console.log('toggleLightbox', gif);
+    const selectedGif = <GifView gif={gif} />;
+    this.setState(nextState => {
+      return { selectedGif, isLightboxOn: !nextState.isLightboxOn }
+    });
   }
 
   componentWillMount() {
@@ -124,10 +137,15 @@ class App extends Component {
             search={this.state.searchImgs}
             favorites={this.state.favoriteImgs}
             onViewportScroll={this.handleViewportScroll}
-            itemHandler={this.showItemDetail}
+            itemHandler={this.toggleLightbox}
           />
         </div>
 
+        <Lightbox
+          subject={this.state.selectedGif}
+          showOverlay={this.state.isLightboxOn}
+          clickHandler={this.onLightboxClick}
+        />
       </main>
     );
   }
