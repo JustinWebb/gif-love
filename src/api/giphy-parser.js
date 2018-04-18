@@ -4,12 +4,22 @@ const PIC_SCHEMA = {
     {
       name: 'fixed_width_small_still',
       filename: '100w.gif',
-      mediaQuery: '(max-width: 767px)'
+      displayAs: 'grid'
     },
     {
       name: 'fixed_width',
       filename: '200w.gif',
-      mediaQuery: '(min-width: 768px)'
+      displayAs: 'grid'
+    },
+    {
+      name: 'preview',
+      filename: 'giphy-preview.mp4',
+      displayAs: 'portrait'
+    },
+    {
+      name: 'original_mp4',
+      filename: 'giphy.mp4',
+      displayAs: 'portrait'
     },
   ]
 };
@@ -22,4 +32,11 @@ export const parseGiphyVO = (gifVO, typeName = PIC_SCHEMA.defaultTypeName) => {
   return { imgType, baseUrl, filename, title: gifVO.title };
 };
 
-export const giphyTypes = PIC_SCHEMA.types.map(type => type);
+export const giphySchemas = PIC_SCHEMA.types.map(type => type);
+
+export const giphyTypes = (function () {
+  const obj = {};
+  PIC_SCHEMA.types.forEach(type => obj[type.name.toUpperCase()] = type.name);
+
+  return obj;
+})()

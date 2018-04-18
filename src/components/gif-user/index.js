@@ -1,4 +1,5 @@
 import React from 'react';
+import './gif-user.css';
 
 const GifUser = (props) => (
   <div className="gif-user">

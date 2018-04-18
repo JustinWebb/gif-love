@@ -9,5 +9,34 @@
 }
 
 .lightbox.is-on {
-  display: block;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.frame {
+  background-color: #ffffff;
+  max-width: 660px;
+  margin: 0 auto;
+  padding: 20px;
+}
+
+.frame .subject-view {
+  display: flex;
+  flex-direction: column;
+  margin: 0;
+  width: 100%;
+}
+
+.frame .subject-view > * {
+  margin: 0 auto;
+}
+
+.frame .subject-view figcaption {
+  display: inline-block;
+  margin: 20px 0 12px;
+  max-width: 300px;
+  word-wrap: break-word;
+  font-style: italic;
+  text-align: left;
 }

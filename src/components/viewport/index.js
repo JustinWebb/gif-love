@@ -170,7 +170,7 @@ export default class Viewport extends React.Component {
     const flexHeight = this.state.flexHeight;
     const listStyle = this.props.scrollX
       ? null
-      : { minHeight: (flexHeight ? `${flexHeight}px` : 'none') }
+      : { maxHeight: (flexHeight ? `${flexHeight}px` : null) }
 
     let listItems = null;
     if (this.props.childElems.length) {

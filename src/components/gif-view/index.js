@@ -1,28 +1,62 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { parseGiphyVO, giphyTypes } from '../../api/giphy-parser';
+import { parseGiphyVO, giphySchemas, giphyTypes } from '../../api/giphy-parser';
 import errorImg from '../../assets/images/error.svg';
 import { once } from 'lodash';
 import './gif-view.css';
 
+const DISPLAY_AS_GRID = 'grid';
+const DISPLAY_AS_PORTRAIT = 'portrait';
+const MODE_LOADING = 'loading';
+const MODE_READY = 'ready';
+const MODE_ERROR = 'error';
+const MQ_GRID_SM = '(max-width: 767px)';
+const MQ_GRID_LG = '(min-width: 768px)';
+const MQ_PORTRAIT_SM = '(max-width: 1024px)';
+const MQ_PORTRAIT_LG = '(min-width: 1025px)';
+
 export default class GifView extends React.Component {
+  constructor(props) {
+    super(props);
+
+    this.state = {
+      mode: MODE_LOADING,
+      hasError: false,
+      isLoaded: false,
+      giphySrcSet: GifView.getSrcSet(props.displayAs),
+      mediaQueries: (props.displayAs === DISPLAY_AS_GRID)
+        ? [MQ_GRID_SM, MQ_GRID_LG]
+        : [MQ_PORTRAIT_SM, MQ_PORTRAIT_LG]
+    };
+  }
 
   static propTypes = {
     gif: PropTypes.object.isRequired,
     reqKey: PropTypes.string,
     loader: PropTypes.func,
     itemHandler: PropTypes.func,
+    displayAs: PropTypes.oneOf([DISPLAY_AS_GRID, DISPLAY_AS_PORTRAIT]),
   };
 
-  state = {
-    mode: 'idle',
-    hasError: false,
-    isLoaded: false,
-  };
+  static defaultProps = {
+    displayAs: DISPLAY_AS_GRID
+  }
+
+  static getSrcSet = function (displayAs) {
+    return giphySchemas.filter(type => type.displayAs === displayAs);
+  }
+
+  static get AS_PORTRAIT() {
+    return DISPLAY_AS_PORTRAIT;
+  }
+
+  static get AS_GRID() {
+    return DISPLAY_AS_GRID;
+  }
 
   onImgLoad = once((e) => {
     console.log('onImgLoad');
-    this.setState({ mode: 'ready', isLoaded: true });
+    this.setState({ mode: MODE_READY, isLoaded: true });
 
     if (this.props.loader) {
       this.props.loader(e, this.props.reqKey);
@@ -30,7 +64,7 @@ export default class GifView extends React.Component {
   });
 
   onImgError = (e) => {
-    this.setState({ mode: 'error', hasError: true });
+    this.setState({ mode: MODE_ERROR, hasError: true });
   }
 
   onClick = (e) => {
@@ -39,12 +73,8 @@ export default class GifView extends React.Component {
     }
   }
 
-  componentWillReceiveProps(props, nextState) {
-    console.log('wtf', props);
-  }
-
   shouldComponentUpdate(nextProps, nextState) {
-    return (this.state.isLoaded && this.state.mode === 'ready' && !nextState.hasError) ? false : true;
+    return (this.state.isLoaded && this.state.mode === MODE_READY && !nextState.hasError) ? false : true;
   }
 
   componentDidCatch(error, info) {
@@ -53,7 +83,11 @@ export default class GifView extends React.Component {
   }
 
   render() {
-    const schema = parseGiphyVO(this.props.gif);
+    const typeName = (this.props.displayAs === DISPLAY_AS_GRID)
+      ? giphyTypes.FIXED_WIDTH_SMALL_STILL
+      : giphyTypes.PREVIEW;
+    const schema = parseGiphyVO(this.props.gif, typeName);
+
     if (!this.state.hasError) {
       const klasses = ['gif-view'];
       const img = <img src={schema.imgType.url} alt={schema.title}
@@ -65,8 +99,11 @@ export default class GifView extends React.Component {
 
       return (
         <picture className={klasses.join(' ')} onClick={this.onClick}>
-          {giphyTypes.map((src, idx) => {
-            return <source key={idx} srcSet={schema.baseUrl + src.filename} media={src.mediaQuery} />
+          {this.state.giphySrcSet.map((src, idx) => {
+            return <source
+              key={idx}
+              srcSet={schema.baseUrl + src.filename}
+              media={this.state.mediaQueries[idx]} />
           })}
           {img}
         </picture>
