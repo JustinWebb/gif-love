@@ -35,6 +35,7 @@
 .frame .subject-view figcaption {
   display: inline-block;
   margin: 20px 0 12px;
+  width: 96%;
   max-width: 300px;
   word-wrap: break-word;
   font-style: italic;

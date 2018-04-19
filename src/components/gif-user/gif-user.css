@@ -5,11 +5,11 @@
 
 .gif-user .display-name {
   display: block;
-  max-width: 300px;
+  width: 90%;
   margin-bottom: 6px;
 }
 
 .gif-user .twitter {
   display: block;
-  max-width: 300px;
+  width: 90%;
 }

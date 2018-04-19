@@ -55,7 +55,11 @@ class App extends Component {
     GiphyService.sendQuery(data.query)
       .then(json => {
         console.log('data', json)
-        this.setState({ searchImgs: json.data, sectionTitle: SECTION_TITLE_SEARCH });
+        this.setState({
+          searchImgs: json.data,
+          sectionTitle: SECTION_TITLE_SEARCH,
+          selectedGif: null
+        });
       });
   }
 

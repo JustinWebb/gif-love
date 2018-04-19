@@ -23,7 +23,7 @@ export default class GifView extends React.Component {
       mode: MODE_LOADING,
       hasError: false,
       isLoaded: false,
-      giphySrcSet: GifView.getSrcSet(props.displayAs),
+      giphySrcSet: (props.displayAs === DISPLAY_AS_GRID) ? GifView.getSrcSet() : [],
       mediaQueries: (props.displayAs === DISPLAY_AS_GRID)
         ? [MQ_GRID_SM, MQ_GRID_LG]
         : [MQ_PORTRAIT_SM, MQ_PORTRAIT_LG]
@@ -42,8 +42,8 @@ export default class GifView extends React.Component {
     displayAs: DISPLAY_AS_GRID
   }
 
-  static getSrcSet = function (displayAs) {
-    return giphySchemas.filter(type => type.displayAs === displayAs);
+  static getSrcSet = function () {
+    return giphySchemas.filter(type => type.displayAs === DISPLAY_AS_GRID);
   }
 
   static get AS_PORTRAIT() {
@@ -79,7 +79,7 @@ export default class GifView extends React.Component {
 
   componentDidCatch(error, info) {
     console.log('componentDidCatch', arguments);
-    this.setState({ mode: 'error', hasError: true });
+    this.setState({ mode: MODE_ERROR, hasError: true });
   }
 
   render() {
@@ -95,6 +95,7 @@ export default class GifView extends React.Component {
       klasses.push('as-portrait');
     }
     const schema = parseGiphyVO(this.props.gif, typeName);
+    const sizeStyle = { minWidth: `${schema.media.width}px`, minHeight: `${schema.media.height}px` };
 
     if (!this.state.hasError) {
       klasses.push(this.state.mode);
@@ -106,7 +107,11 @@ export default class GifView extends React.Component {
           onError={this.onMediaError}
         />;
         view = (
-          <picture className={klasses.join(' ')} onClick={this.onClick}>
+          <picture
+            className={klasses.join(' ')}
+            onClick={this.onClick}
+            style={sizeStyle}
+          >
             {this.state.giphySrcSet.map((src, idx) => {
               return <source
                 key={idx}
@@ -118,15 +123,19 @@ export default class GifView extends React.Component {
         );
       } else if (schema.media.mp4) {
         view = (
-          <div className={klasses.join(' ')} onClick={this.onClick}>
+          <div
+            className={klasses.join(' ')}
+            onClick={this.onClick}
+            style={sizeStyle}
+          >
             <video
               src={schema.media.mp4}
+              onCanPlay={this.onMediaLoad}
+              onError={this.onMediaError}
               autoPlay="true"
               loop="true"
               muted="true"
               playsInline="true"
-              onCanPlay={this.onMediaLoad}
-              onError={this.onMediaError}
             />
           </div>
         );
@@ -134,7 +143,7 @@ export default class GifView extends React.Component {
     } else {
       klasses.push('error');
       view = (
-        <picture className={klasses.join(' ')}>
+        <picture className={klasses.join(' ')} style={sizeStyle}>
           <img src={errorImg} alt="This content is not available"
             height={`${schema.media.height}px`} />
         </picture>

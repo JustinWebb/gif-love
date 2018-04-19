@@ -36,9 +36,16 @@ export default class GifDatasetManager extends React.Component {
   }
 
   componentWillReceiveProps(nextProps) {
-    const searchViews = this.getViews(nextProps, REQ_VIEW_SEARCH);
-    const favoritesViews = this.getViews(nextProps, REQ_VIEW_FAVORITES);
-    this.setState({ searchViews, favoritesViews });
+    if (this.props.search !== nextProps.search) {
+      this.setState({
+        searchViews: this.getViews(nextProps, REQ_VIEW_SEARCH)
+      });
+    }
+    if (this.props.favorites !== nextProps.favorites) {
+      this.setState({
+        favoritesViews: this.getViews(nextProps, REQ_VIEW_FAVORITES)
+      });
+    }
   }
 
   shouldComponentUpdate(prevProps, prevState) {

@@ -21,6 +21,16 @@ const PIC_SCHEMA = {
       filename: 'giphy.mp4',
       displayAs: 'portrait'
     },
+    {
+      name: 'original',
+      filename: 'giphy.mp4',
+      displayAs: 'portrait'
+    },
+    {
+      name: 'original_still',
+      filename: 'giphy_s.gif',
+      displayAs: 'portrait'
+    },
   ]
 };
 
@@ -34,17 +44,25 @@ export const giphyTypes = (function () {
 })();
 
 const checkAvailableMedia = (imgNode, preferedType) => {
+  let nextTypeToCheck = null;
   try {
     const media = imgNode[preferedType];
     const source = media.url || media.mp4;
     if (typeof source !== 'string') {
-      console.log('bad url', preferedType, imgNode);
 
+      if (preferedType === giphyTypes.FIXED_WIDTH_SMALL_STILL) nextTypeToCheck = giphyTypes.FIXED_WIDTH;
+      else if (preferedType === giphyTypes.PREVIEW) nextTypeToCheck = giphyTypes.ORIGINAL_MP4;
+      else if (preferedType === giphyTypes.ORIGINAL_MP4) nextTypeToCheck = giphyTypes.ORIGINAL;
+      else if (preferedType === giphyTypes.ORIGINAL) nextTypeToCheck = giphyTypes.ORIGINAL_STILL;
+
+      return checkAvailableMedia(imgNode, nextTypeToCheck);
     } else {
       return { media, source };
     }
   } catch (error) {
-    console.error(error);
+    const targets = preferedType + ', ' + nextTypeToCheck;
+    console.error(`Giphy Parse Error on '${targets}': `, error);
+    return { media: { url: 'FOOBAR' }, source: 'NO_SOURCE' };
   }
 }
 
