@@ -32,10 +32,15 @@ export default class LightBox extends React.Component {
   }
 
   onResize = (e) => {
-    if (window.innerWidth < 768 && this.state.isFlexFrame) {
-      this.setState({ isFlexFrame: false });
-    } else if (window.innerWidth >= 768 && !this.state.isFlexFrame) {
-      this.setState({ isFlexFrame: true });
+    this.checkIsFlexFrame();
+  }
+
+  checkIsFlexFrame = (e) => {
+    const isFlexFrame = (window.innerWidth < 768) ? true : false;
+    if (this.state.isFlexFrame !== isFlexFrame) {
+      this.setState(nextState => {
+        return { isFlexFrame };
+      });
     }
   }
 
@@ -46,6 +51,7 @@ export default class LightBox extends React.Component {
 
   componentDidMount() {
     window.addEventListener('resize', this.onResize);
+    this.checkIsFlexFrame();
   }
 
   componentWillUnmount() {
@@ -59,7 +65,7 @@ export default class LightBox extends React.Component {
       ? (
         <div className="frame">
           <figure className="subject-view">
-            <GifView gif={subject} displayAs={GifView.AS_PORTRAIT} constrained={this.state.isFlexFrame} />
+            <GifView gif={subject} displayAs={GifView.AS_PORTRAIT} constrained={!this.state.isFlexFrame} />
             <figcaption className="caption">{subject.title}</figcaption>
           </figure>
           <GifUser user={subject.user} />

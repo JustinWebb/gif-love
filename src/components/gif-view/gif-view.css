@@ -9,6 +9,7 @@
 }
 
 .gif-view img {
+  margin: 0 auto;
   max-width: 100%;
   opacity: 0.01;
 }

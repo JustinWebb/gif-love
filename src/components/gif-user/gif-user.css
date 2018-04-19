@@ -1,15 +1,84 @@
 .gif-user {
   text-align: left;
+}
+
+.gif-user.hidden-child .social-links {
+  display: none;
+}
+
+.gif-user .details {
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  min-height: 20px;
+}
+
+.gif-user .details .avatar {
+  margin-right: 12px;
+  width: 42px;
+}
+
+.gif-user .details .avatar img {
+  max-width: 100%;
+}
+
+.gif-user .details .display-name {
+  display: inline-block;
+  max-width: 290px;
+  font-family: 'Dosis', sans-serif;
+  font-size: 1.2em;
+  font-weight: 600;
+  letter-spacing: 0.05em;
+  color: #AD132D;
+}
+
+.gif-user .social-links {
+  display: flex;
+  width: 100%;
+}
+
+.gif-user .social-links ul {
+  margin: 0 auto;
+  padding: 0;
+  list-style: none;
+  height: 44px;
+}
+
+.gif-user .social-links li {
+  display: inline-block;
+  margin: 0 12px;
+  width: 44px;
+  height: 44px;
+}
+
+.gif-user .social-links a {
+  background-repeat: no-repeat;
+  background-position: center center;
+  background-size: 80%;
+}
+.gif-user .social-links a.facebook {
+  background-image: url('../../assets/images/facebook.svg');
+}
+.gif-user .social-links a.facebook:hover {
+  background-image: url('../../assets/images/facebook-alt.svg');
+}
+.gif-user .social-links a.twitter {
+  background-image: url('../../assets/images/twitter.svg');
+}
+.gif-user .social-links a.twitter:hover {
+  background-image: url('../../assets/images/twitter-alt.svg');
+}
+.gif-user .social-links a.instagram {
+  background-image: url('../../assets/images/instagram.svg');
+}
+.gif-user .social-links a.instagram:hover {
+  background-image: url('../../assets/images/instagram-alt.svg');
+}
+
+.gif-user .social-links a {
+  display: inline-block;
+  width: 100%;
+  height: 100%;
   font-size: 0.9em;
-}
-
-.gif-user .display-name {
-  display: block;
-  width: 90%;
-  margin-bottom: 6px;
-}
-
-.gif-user .twitter {
-  display: block;
-  width: 90%;
+  text-decoration: none;
 }

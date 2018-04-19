@@ -19,7 +19,9 @@
   padding: 2%;
   width: 92%;
   max-width: 400px;
-  background-color: #ffffff;
+  /* background-color: #F7687F; */
+  background-color: rgba(253, 227, 231, 0.9);
+  overflow: hidden;
 }
 
 .frame .subject-view {
@@ -29,18 +31,23 @@
   width: 100%;
 }
 
+.frame .subject-view + div {
+  margin-top: 20px;
+}
+
 .frame .subject-view > img {
   margin: 0 auto;
 }
 
 .frame .subject-view .caption {
   display: inline-block;
-  margin: 20px 0 12px;
+  margin: 12px 0 0;
   width: 96%;
   max-width: 300px;
   word-wrap: break-word;
   font-style: italic;
   text-align: left;
+  color: #E36E39;
 }
 
 @media (min-width: 768px) {

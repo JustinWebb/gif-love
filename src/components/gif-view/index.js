@@ -14,6 +14,7 @@ const MQ_GRID_SM = '(max-width: 767px)';
 const MQ_GRID_LG = '(min-width: 768px)';
 const MQ_PORTRAIT_SM = '(max-width: 1024px)';
 const MQ_PORTRAIT_LG = '(min-width: 1025px)';
+const MIN_MEDIA_WIDTH = 294;
 
 export default class GifView extends React.Component {
   constructor(props) {
@@ -75,6 +76,25 @@ export default class GifView extends React.Component {
     }
   }
 
+  getSizeStyle = (media) => {
+    let style = null;
+
+    if (this.props.displayAs === DISPLAY_AS_GRID) {
+      style = { minWidth: `${media.width}px`, minHeight: `${media.height}px` };
+    } else {
+      const isMinWidth = (media.width < MIN_MEDIA_WIDTH) ? true : false;
+      if (this.props.constrained) {
+        const heightStyle = (isMinWidth) ? {} : { minHeight: `${media.height}px` };
+        style = Object.assign({
+          minWidth: (isMinWidth) ? `${MIN_MEDIA_WIDTH}px` : `${media.width}px`,
+        }, heightStyle);
+      } else {
+        style = (isMinWidth) ? { minWidth: `${MIN_MEDIA_WIDTH}px` } : null;
+      }
+    }
+    return style;
+  }
+
   shouldComponentUpdate(nextProps, nextState) {
     return (this.state.isLoaded && this.state.mode === MODE_READY && !nextState.hasError) ? false : true;
   }
@@ -88,6 +108,7 @@ export default class GifView extends React.Component {
     const klasses = ['gif-view'];
     let view = null;
     let typeName = null;
+    let sizeStyle = null;
 
     if (this.props.displayAs === DISPLAY_AS_GRID) {
       typeName = giphyTypes.FIXED_WIDTH_SMALL_STILL;
@@ -97,9 +118,7 @@ export default class GifView extends React.Component {
       klasses.push('as-portrait');
     }
     const schema = parseGiphyVO(this.props.gif, typeName);
-    const sizeStyle = (this.props.constrained)
-      ? { minWidth: `${schema.media.width}px`, minHeight: `${schema.media.height}px` }
-      : null;
+    sizeStyle = this.getSizeStyle(schema.media);
 
     if (!this.state.hasError) {
       klasses.push(this.state.mode);
