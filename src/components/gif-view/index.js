@@ -54,8 +54,8 @@ export default class GifView extends React.Component {
     return DISPLAY_AS_GRID;
   }
 
-  onImgLoad = once((e) => {
-    console.log('onImgLoad');
+  onMediaLoad = once((e) => {
+    console.log('onMediaLoad');
     this.setState({ mode: MODE_READY, isLoaded: true });
 
     if (this.props.loader) {
@@ -63,7 +63,7 @@ export default class GifView extends React.Component {
     }
   });
 
-  onImgError = (e) => {
+  onMediaError = (e) => {
     this.setState({ mode: MODE_ERROR, hasError: true });
   }
 
@@ -83,39 +83,64 @@ export default class GifView extends React.Component {
   }
 
   render() {
-    const typeName = (this.props.displayAs === DISPLAY_AS_GRID)
-      ? giphyTypes.FIXED_WIDTH_SMALL_STILL
-      : giphyTypes.PREVIEW;
+    const klasses = ['gif-view'];
+    let view = null;
+    let typeName = null;
+
+    if (this.props.displayAs === DISPLAY_AS_GRID) {
+      typeName = giphyTypes.FIXED_WIDTH_SMALL_STILL;
+      klasses.push('as-grid');
+    } else {
+      typeName = giphyTypes.PREVIEW;
+      klasses.push('as-portrait');
+    }
     const schema = parseGiphyVO(this.props.gif, typeName);
 
     if (!this.state.hasError) {
-      const klasses = ['gif-view'];
-      const img = <img src={schema.imgType.url} alt={schema.title}
-        onLoad={this.onImgLoad}
-        onError={this.onImgError}
-      />;
-
       klasses.push(this.state.mode);
 
-      return (
-        <picture className={klasses.join(' ')} onClick={this.onClick}>
-          {this.state.giphySrcSet.map((src, idx) => {
-            return <source
-              key={idx}
-              srcSet={schema.baseUrl + src.filename}
-              media={this.state.mediaQueries[idx]} />
-          })}
-          {img}
-        </picture>
-      );
+      // media may be GIF or MP4
+      if (schema.media.url) {
+        const img = <img src={schema.media.url} alt={schema.title}
+          onLoad={this.onMediaLoad}
+          onError={this.onMediaError}
+        />;
+        view = (
+          <picture className={klasses.join(' ')} onClick={this.onClick}>
+            {this.state.giphySrcSet.map((src, idx) => {
+              return <source
+                key={idx}
+                srcSet={schema.baseUrl + src.filename}
+                media={this.state.mediaQueries[idx]} />
+            })}
+            {img}
+          </picture>
+        );
+      } else if (schema.media.mp4) {
+        view = (
+          <div className={klasses.join(' ')} onClick={this.onClick}>
+            <video
+              src={schema.media.mp4}
+              autoPlay="true"
+              loop="true"
+              muted="true"
+              playsInline="true"
+              onCanPlay={this.onMediaLoad}
+              onError={this.onMediaError}
+            />
+          </div>
+        );
+      }
     } else {
-
-      return (
-        <picture className="gif-view error">
+      klasses.push('error');
+      view = (
+        <picture className={klasses.join(' ')}>
           <img src={errorImg} alt="This content is not available"
-            height={`${schema.imgType.height}px`} />
+            height={`${schema.media.height}px`} />
         </picture>
       );
     }
+    // Return JSX for Picture or Video element
+    return view;
   }
 }

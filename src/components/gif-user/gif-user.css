@@ -2,3 +2,14 @@
   text-align: left;
   font-size: 0.9em;
 }
+
+.gif-user .display-name {
+  display: block;
+  max-width: 300px;
+  margin-bottom: 6px;
+}
+
+.gif-user .twitter {
+  display: block;
+  max-width: 300px;
+}

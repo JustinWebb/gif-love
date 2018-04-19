@@ -1,8 +1,11 @@
 .gif-view {
   display: inline-block;
-  max-width: 100px;
-  min-height: 50px;
   font-size: 0.9em;
+}
+
+.gif-view.as-grid {
+  min-height: 50px;
+  max-width: 100px;
 }
 
 .gif-view img {
@@ -13,6 +16,11 @@
 .gif-view.ready img {
   opacity: 1;
   transition: opacity ease-in 0.5s;
+}
+
+.gif-view video {
+  max-width: 100%;
+  margin: 0 auto;
 }
 
 .gif-view.loading {
@@ -40,11 +48,11 @@
 }
 
 @media (min-width: 768px) {
-  .gif-view {
+  .gif-view.as-grid {
     max-width: 200px;
   }
 
-  .gif-view.error {
+  .gif-view.as-grid.error {
     width: 200px;
   }
 }

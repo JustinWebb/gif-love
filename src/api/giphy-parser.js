@@ -24,14 +24,6 @@ const PIC_SCHEMA = {
   ]
 };
 
-
-export const parseGiphyVO = (gifVO, typeName = PIC_SCHEMA.defaultTypeName) => {
-  const imgType = gifVO.images[typeName];
-  const baseUrl = imgType.url.substring(0, imgType.url.lastIndexOf('/') + 1);
-  const filename = imgType.url.replace(baseUrl, '');
-  return { imgType, baseUrl, filename, title: gifVO.title };
-};
-
 export const giphySchemas = PIC_SCHEMA.types.map(type => type);
 
 export const giphyTypes = (function () {
@@ -39,4 +31,26 @@ export const giphyTypes = (function () {
   PIC_SCHEMA.types.forEach(type => obj[type.name.toUpperCase()] = type.name);
 
   return obj;
-})()
+})();
+
+const checkAvailableMedia = (imgNode, preferedType) => {
+  try {
+    const media = imgNode[preferedType];
+    const source = media.url || media.mp4;
+    if (typeof source !== 'string') {
+      console.log('bad url', preferedType, imgNode);
+
+    } else {
+      return { media, source };
+    }
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+export const parseGiphyVO = (gifVO, typeName = PIC_SCHEMA.defaultTypeName) => {
+  const { media, source } = checkAvailableMedia(gifVO.images, typeName);
+  const baseUrl = source.substring(0, source.lastIndexOf('/') + 1);
+  const filename = source.replace(baseUrl, '');
+  return { media, baseUrl, filename, title: gifVO.title };
+};
