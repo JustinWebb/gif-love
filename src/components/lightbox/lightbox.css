@@ -15,10 +15,11 @@
 }
 
 .frame {
-  background-color: #ffffff;
-  max-width: 660px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 2%;
+  width: 92%;
+  max-width: 400px;
+  background-color: #ffffff;
 }
 
 .frame .subject-view {
@@ -32,7 +33,7 @@
   margin: 0 auto;
 }
 
-.frame .subject-view figcaption {
+.frame .subject-view .caption {
   display: inline-block;
   margin: 20px 0 12px;
   width: 96%;
@@ -40,4 +41,16 @@
   word-wrap: break-word;
   font-style: italic;
   text-align: left;
+}
+
+@media (min-width: 768px) {
+  .frame {
+    padding: 20px;
+    width: auto;
+    max-width: 660px;
+  }
+
+  .frame .subject-view .caption {
+    max-width: 96%;
+  }
 }

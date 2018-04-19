@@ -26,7 +26,7 @@ export default class GifView extends React.Component {
       giphySrcSet: (props.displayAs === DISPLAY_AS_GRID) ? GifView.getSrcSet() : [],
       mediaQueries: (props.displayAs === DISPLAY_AS_GRID)
         ? [MQ_GRID_SM, MQ_GRID_LG]
-        : [MQ_PORTRAIT_SM, MQ_PORTRAIT_LG]
+        : [MQ_PORTRAIT_SM, MQ_PORTRAIT_LG],
     };
   }
 
@@ -36,10 +36,12 @@ export default class GifView extends React.Component {
     loader: PropTypes.func,
     itemHandler: PropTypes.func,
     displayAs: PropTypes.oneOf([DISPLAY_AS_GRID, DISPLAY_AS_PORTRAIT]),
+    constrained: PropTypes.bool,
   };
 
   static defaultProps = {
-    displayAs: DISPLAY_AS_GRID
+    displayAs: DISPLAY_AS_GRID,
+    constrained: true,
   }
 
   static getSrcSet = function () {
@@ -95,7 +97,9 @@ export default class GifView extends React.Component {
       klasses.push('as-portrait');
     }
     const schema = parseGiphyVO(this.props.gif, typeName);
-    const sizeStyle = { minWidth: `${schema.media.width}px`, minHeight: `${schema.media.height}px` };
+    const sizeStyle = (this.props.constrained)
+      ? { minWidth: `${schema.media.width}px`, minHeight: `${schema.media.height}px` }
+      : null;
 
     if (!this.state.hasError) {
       klasses.push(this.state.mode);

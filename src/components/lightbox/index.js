@@ -1,4 +1,5 @@
 import React from 'react';
+import PropTypes from 'prop-types';
 
 import GifView from '../gif-view';
 import GifUser from '../gif-user';
@@ -12,9 +13,14 @@ export default class LightBox extends React.Component {
     this.state = {
       isActive: false,
       subject: null,
+      isFlexFrame: false,
     };
 
     this.lightboxElem = null;
+  }
+
+  static propTypes = {
+    subject: PropTypes.object,
   }
 
   onClick = (e) => {
@@ -25,9 +31,25 @@ export default class LightBox extends React.Component {
     }
   }
 
+  onResize = (e) => {
+    if (window.innerWidth < 768 && this.state.isFlexFrame) {
+      this.setState({ isFlexFrame: false });
+    } else if (window.innerWidth >= 768 && !this.state.isFlexFrame) {
+      this.setState({ isFlexFrame: true });
+    }
+  }
+
   componentWillReceiveProps(props, nextState) {
     const isActive = (props.subject !== null) ? true : false;
     this.setState({ subject: props.subject, isActive });
+  }
+
+  componentDidMount() {
+    window.addEventListener('resize', this.onResize);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener('resize', this.onResize);
   }
 
   render() {
@@ -37,8 +59,8 @@ export default class LightBox extends React.Component {
       ? (
         <div className="frame">
           <figure className="subject-view">
-            <GifView gif={subject} displayAs={GifView.AS_PORTRAIT} />
-            <figcaption>{subject.title}</figcaption>
+            <GifView gif={subject} displayAs={GifView.AS_PORTRAIT} constrained={this.state.isFlexFrame} />
+            <figcaption className="caption">{subject.title}</figcaption>
           </figure>
           <GifUser user={subject.user} />
         </div>
